@@ -40,6 +40,7 @@ namespace proyectoFinalEvaluacionC.Controllers
             System.Console.WriteLine("[INFORMACIÓN-HomeController-Index] Estado conexión generada: " + estadoGenerada);
 
             //Se realiza la consulta y se guarda una lista de alumnosDTO
+            listProducto = ConsultaBaseDeDatos.InsertarBBDD(conexionGenerada);
             listProducto = ConsultaBaseDeDatos.ConsultaBBDD(conexionGenerada);
 
             System.Console.WriteLine("[INFORMACIÓN-HomeController-Index]");
