@@ -1,5 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Npgsql;
 using proyectoFinalEvaluacionC.Models;
+using proyectoFinalEvaluacionC.Models.Conexiones;
+using proyectoFinalEvaluacionC.Models.Consultas;
+using proyectoFinalEvaluacionC.Models.DTOs;
+using proyectoFinalEvaluacionC.Util;
 using System.Diagnostics;
 
 namespace proyectoFinalEvaluacionC.Controllers
@@ -13,43 +18,37 @@ namespace proyectoFinalEvaluacionC.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index(ConexionPostgreSQL conexionPostgreSQL)
+        public IActionResult Index(ConexionBaseDatos conexionPostgreSQL)
         {
             System.Console.WriteLine("[INFORMACIÓN-HomeController-Index] Entra en Index");
 
             //CONSTANTES
-            const string HOST = VariablesConexionPostgreSQL.HOST;
-            const string PORT = VariablesConexionPostgreSQL.PORT;
-            const string USER = VariablesConexionPostgreSQL.USER;
-            const string PASS = VariablesConexionPostgreSQL.PASS;
-            const string DB = VariablesConexionPostgreSQL.DB;
+            const string HOST = VariablesBasesDatos.HOST;
+            const string PORT = VariablesBasesDatos.PORT;
+            const string USER = VariablesBasesDatos.USER;
+            const string PASS = VariablesBasesDatos.PASS;
+            const string DB = VariablesBasesDatos.DB;
 
             //Se genera una conexión a PostgreSQL y validamos que esté abierta fuera del método
             var estadoGenerada = "";
             NpgsqlConnection conexionGenerada = new NpgsqlConnection();
 
-            List<AlumnoDTO> listAlumnoDTO = new List<AlumnoDTO>();
-            List<AsignaturaAlumnoDTOs> listAsignaturaDTO = new List<AsignaturaAlumnoDTOs>();
+            List<ProductoDTO> listProducto = new List<ProductoDTO>();
 
-            //NpgsqlCommand consulta = new NpgsqlCommand();
             conexionGenerada = conexionPostgreSQL.GeneraConexion(HOST, PORT, DB, USER, PASS);
             estadoGenerada = conexionGenerada.State.ToString();
             System.Console.WriteLine("[INFORMACIÓN-HomeController-Index] Estado conexión generada: " + estadoGenerada);
 
             //Se realiza la consulta y se guarda una lista de alumnosDTO
-            listAlumnoDTO = ConsultasPostgreSQL.ConsultaSelectPostgreSQL(conexionGenerada);
-            int cont = listAlumnoDTO.Count();
-            System.Console.WriteLine("[INFORMACIÓN-HomeController-Index] Lista compuesta por: " + cont + " alumnos");
+            listProducto = ConsultaBaseDeDatos.ConsultaBBDD(conexionGenerada);
 
-            listAsignaturaDTO = ConsultasPostgreSQL.ConsultaSelectPostgreSQL2(conexionGenerada);
+            System.Console.WriteLine("[INFORMACIÓN-HomeController-Index]");
 
-            foreach (AsignaturaAlumnoDTOs s in listAsignaturaDTO)
+            foreach (ProductoDTO p in listProducto)
             {
-                System.Console.WriteLine("Datos alumno: " + s.nombre + " " + s.nombreAsignatura);
+                System.Console.WriteLine("Producto: " + p.Id_producto + " " + p.Nombre_producto);
 
             }
-
-            ConsultasPostgreSQL.InsercionAlumnoPostgreSQL(conexionGenerada);
 
             CierraConexion.Cerrar(conexionGenerada);
             return View();

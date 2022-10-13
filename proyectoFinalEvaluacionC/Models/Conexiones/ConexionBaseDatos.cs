@@ -1,4 +1,6 @@
-﻿namespace proyectoFinalEvaluacionC.Models.Conexiones
+﻿using Npgsql;
+
+namespace proyectoFinalEvaluacionC.Models.Conexiones
 {
     public class ConexionBaseDatos
     {
